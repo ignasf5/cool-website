@@ -1,25 +1,28 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    const changeColorBtn = document.getElementById('changeColorBtn');
-    const swapTextBtn = document.getElementById('swapTextBtn');
-    const textElement = document.getElementById('text');
-    const slider = document.getElementById('slider');
+    const buildings = document.querySelectorAll('.building');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+    const weatherText = document.getElementById('weather-text');
 
-    // Function to change the background color of the container
-    changeColorBtn.addEventListener('click', () => {
-        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-        document.querySelector('.container').style.backgroundColor = randomColor;
+    buildings.forEach((building, index) => {
+        building.addEventListener('click', () => {
+            notificationText.textContent = `You clicked on building ${index + 1}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        });
     });
 
-    // Function to swap the text content
-    swapTextBtn.addEventListener('click', () => {
-        textElement.textContent = textElement.textContent === "This is some text that will be swapped." 
-            ? "The text has been swapped!" 
-            : "This is some text that will be swapped.";
-    });
-
-    // Function to handle slider input
-    slider.addEventListener('input', () => {
-        const value = slider.value;
-        textElement.style.fontSize = value + 'px';
-    });
+    // Fetch weather data from OpenWeatherMap
+    const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
+    const city = 'New York'; // Replace with your desired city
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+        .then(response => response.json())
+        .then(data => {
+            weatherText.textContent = `Weather in ${city}: ${data.weather[0].description}, ${data.main.temp}°C`;
+        })
+        .catch(error => {
+            weatherText.textContent = 'Failed to load weather data';
+        });
 });
